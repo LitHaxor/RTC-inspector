@@ -10,6 +10,7 @@ A Chrome extension that records every `RTCPeerConnection` and `RTCDataChannel` o
 
 [Install](#install) · [Features](#features) · [How to use](#how-to-use) · [Privacy](#privacy-and-permissions) · [FAQ](#faq) · [SDK](#embed-it-in-your-app) · [Development](#development) · [License](#license)
 
+[![CI](https://github.com/LitHaxor/RTC-inspector/actions/workflows/ci.yml/badge.svg)](https://github.com/LitHaxor/RTC-inspector/actions/workflows/ci.yml)
 ![Chrome 111+](https://img.shields.io/badge/Chrome-111%2B-2b7de9?logo=googlechrome&logoColor=white)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-2b7de9)
 ![Data collected: none](https://img.shields.io/badge/data%20collected-none-2e9e5b)
@@ -253,11 +254,14 @@ A content script runs in each page's own JavaScript world at `document_start`, b
 
 ### Releasing to the Chrome Web Store
 
-1. Bump `version` in both `packages/extension/public/manifest.json` and `packages/extension/package.json`.
-2. Run `pnpm package:extension`. It builds the extension, removes the development-only `key` from the manifest, checks the package (name and summary length, version, icons, every referenced file, no remote resources) and writes `packages/extension/release/rtc-inspector-<version>.zip`. The same files always produce the same zip.
-3. Run `pnpm --filter @rtc-inspector/extension e2e`. It includes a test that installs that zip in Chrome for Testing and checks that it records a call and makes no network requests.
-4. If the UI changed, regenerate the listing images with `node packages/extension/scripts/store-assets.ts`.
-5. Upload the zip in the [Developer Dashboard](https://chrome.google.com/webstore/devconsole). The listing copy, permission justifications, privacy answers and asset list are in [packages/extension/store/LISTING.md](packages/extension/store/LISTING.md).
+Releases are automated. Every pull request and push to `main` runs [CI](.github/workflows/ci.yml): typecheck, unit tests with the coverage gate, build, the store zip, and both end-to-end suites on real Chrome. Pushing a version tag runs [Release](.github/workflows/release.yml), which reruns CI and uploads the tested zip to the Chrome Web Store through its API, then attaches it to a GitHub release:
+
+```sh
+# after bumping version in packages/extension/public/manifest.json and package.json
+git tag v0.2.0 && git push origin v0.2.0
+```
+
+[RELEASING.md](RELEASING.md) covers the one-time setup (first manual upload, a Google Cloud service account, GitHub environment secrets), staged publishing and troubleshooting. To build the zip locally, run `pnpm package:extension`. To regenerate the listing images, run `node packages/extension/scripts/store-assets.ts`. The listing copy is in [packages/extension/store/LISTING.md](packages/extension/store/LISTING.md).
 
 ## Roadmap
 

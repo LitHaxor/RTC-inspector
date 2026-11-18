@@ -1,0 +1,91 @@
+name: Release
+
+# Push a tag such as v0.2.0 to test, upload and submit that version to the
+# Chrome Web Store, and attach the zip to a GitHub release. Run it by hand
+# (Actions > Release > Run workflow) for a dry run that only checks the
+# credentials and the item, or to retry a failed submission.
+# One-time setup: RELEASING.md.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Only sign in and check the item; upload nothing
+        type: boolean
+        default: true
+      publish-type:
+        description: After approval, go live automatically (default) or wait for Publish in the dashboard (staged)
+        type: choice
+        options: [default, staged]
+        default: default
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  version:
+    name: Tag matches the extension version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Check versions
+        working-directory: packages/extension
+        env:
+          TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: node scripts/publish.ts --check-version ${TAG:+--tag "$TAG"}
+
+  ci:
+    needs: version
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Chrome Web Store
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: chrome-web-store
+      url: https://chromewebstore.google.com/detail/${{ vars.CWS_ITEM_ID }}
+    permissions:
+      contents: write # to create the GitHub release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Download the tested zip
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: chrome-web-store-zip
+          path: packages/extension/release
+      - name: Upload and submit for review
+        working-directory: packages/extension
+        env:
+          CWS_PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+          CWS_ITEM_ID: ${{ vars.CWS_ITEM_ID }}
+          CWS_SERVICE_ACCOUNT_KEY: ${{ secrets.CWS_SERVICE_ACCOUNT_KEY }}
+          TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          STAGED: ${{ inputs.publish-type == 'staged' }}
+          DRY_RUN: ${{ inputs.dry-run == true }}
+        run: |
+          args=()
+          if [ -n "$TAG" ]; then args+=(--tag "$TAG"); fi
+          if [ "$STAGED" = "true" ]; then args+=(--staged); fi
+          if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          node scripts/publish.ts "${args[@]}"
+      - name: Create the GitHub release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" packages/extension/release/*.zip --title "RTC Inspector $TAG" --generate-notes --verify-tag
