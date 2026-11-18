@@ -1,0 +1,42 @@
+{
+  "name": "@rtc-inspector/sdk",
+  "version": "0.1.0",
+  "description": "Drop-in WebRTC instrumentation: observe RTCPeerConnections and DataChannels without changing app code",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./auto": "./src/auto.ts"
+  },
+  "sideEffects": [
+    "./src/auto.ts",
+    "./dist/auto.js"
+  ],
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "./auto": {
+        "types": "./dist/auto.d.ts",
+        "import": "./dist/auto.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts src/auto.ts --format esm --clean --target es2020 && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@rtc-inspector/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^9.0.0"
+  }
+}

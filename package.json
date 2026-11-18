@@ -1,0 +1,27 @@
+{
+  "name": "rtc-inspector",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LitHaxor/RTC-inspector.git"
+  },
+  "homepage": "https://github.com/LitHaxor/RTC-inspector",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @rtc-inspector/playground dev",
+    "build": "pnpm -r build",
+    "package:extension": "pnpm --filter @rtc-inspector/extension package",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "pnpm -r typecheck",
+    "e2e": "pnpm --filter @rtc-inspector/playground e2e"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@vitest/coverage-v8": "^5.1.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@rtc-inspector/extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "RTC Inspector for Chrome: records every page's WebRTC and shows it in a popup, a window or a DevTools panel",
+  "license": "MIT",
+  "scripts": {
+    "build": "vite build && tsup src/inject.ts src/relay.ts src/background.ts --format iife --platform browser --target chrome111 --out-dir dist --no-config",
+    "package": "pnpm build && node scripts/package.ts",
+    "typecheck": "tsc --noEmit -p .",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@fontsource/atkinson-hyperlegible-mono": "^5.3.0",
+    "@fontsource/host-grotesk": "^5.3.0",
+    "@rtc-inspector/core": "workspace:*",
+    "@rtc-inspector/sdk": "workspace:*",
+    "@rtc-inspector/ui": "workspace:*",
+    "lucide-react": "^1.74.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.2.0",
+    "tailwindcss": "^4.3.5",
+    "tsup": "^9.0.0",
+    "vite": "^8.3.8"
+  }
+}

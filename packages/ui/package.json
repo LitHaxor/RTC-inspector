@@ -1,0 +1,35 @@
+{
+  "name": "@rtc-inspector/ui",
+  "version": "0.1.0",
+  "description": "React visual inspector for RTC Inspector event streams",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/inspector.css"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@rtc-inspector/core": "workspace:*",
+    "lucide-react": "^1.74.0",
+    "recharts": "^3.10.1",
+    "zustand": "^5.1.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.2.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  }
+}

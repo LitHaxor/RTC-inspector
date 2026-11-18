@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "RTC Inspector",
+  "version": "0.1.0",
+  "description": "See what any page's WebRTC connections are doing: signaling, ICE, data channels and stats. Everything stays in your browser.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq0n3eOVHgNXMj0jDfz9Fu9z/tdgKsoHrGxX7VP1NIpmKLkssB3YM/Nd0IJ3cHHIo2KLY5jimb9EoVBg1uo666vgmIfLa2eqXO5TMpziyFg4Nz4+X379dODHCTF0aGDAHFrQzfyniueZJS15ETwVnzke5YCqyFW3j9iDLucTOd7DoSSvEarM0U7NiqR4nXOkdzDR45E2GVyAS+8uBaN22uL2xXAOQXEGIXm7xsx39nAhojIsnIzknoV8VpX9z4SSlBGIzR33Y49qO5LmYROviyH9zjja9oH1EV69KZuUHTLIHTZTzckrv9yCc4LL3sYaPlsUvbBe1JmKpoBlA4U6g1wIDAQAB",
+  "minimum_chrome_version": "111",
+  "icons": {
+    "16": "icons/active-16.png",
+    "32": "icons/active-32.png",
+    "48": "icons/active-48.png",
+    "128": "icons/active-128.png"
+  },
+  "action": {
+    "default_title": "RTC Inspector: no WebRTC on this page",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/inactive-16.png",
+      "32": "icons/inactive-32.png",
+      "48": "icons/inactive-48.png",
+      "128": "icons/inactive-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.global.js"
+  },
+  "devtools_page": "devtools.html",
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "inject.global.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "relay.global.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ]
+}

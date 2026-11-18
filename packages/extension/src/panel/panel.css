@@ -1,0 +1,14 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Console (deal 2/3, seed rtc-inspector-webrtc-debugging-c5d9·9c901455·2026-11-17·r0)
+ * nav: top bar with tabs over a peer rail · signature: the sequence timeline, one lifeline per peer with every offer, candidate and message drawn between them · states: empty, error, live, paused, full · console: graphite
+ * axes: dark/grotesk-sans/chromatic-amber · posture: restrained · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R3 V4 · weakest: R, many small panels; the overview sets the focused connection's state and lifecycle large */
+/* Hallmark · answered: 26a/26b, focus-visible, active and disabled states live in base.css and the .ctl/.field/.tab/.link rules of @rtc-inspector/ui */
+@import "tailwindcss";
+@import "@rtc-inspector/ui/styles.css";
+@source "../../../ui/src";
+@source "./";
+
+html, body, #root { height: 100%; overflow-x: clip; }
+
+/* Chrome caps extension popups at 800 x 600. */
+html.popup, html.popup body { width: 800px; height: 600px; }
